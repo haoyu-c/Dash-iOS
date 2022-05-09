@@ -6,7 +6,7 @@
 - [ ] Dark Mode Support (Done for the native part, web content is working in progress, better if the original author can give a copy of css that supports dark mode).
 - [ ] Download docsets from remote urls.
 - [ ] Add support for sharing docsets.
-- [ ] Imporve support for keyboard and pointer.
+- [ ] Improve support for keyboard and pointer.
 - [ ] Support Apple docset (Not in my current plan without help from the original author).
 
 # Acknowledgement

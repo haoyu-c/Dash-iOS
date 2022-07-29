@@ -7,7 +7,6 @@
 //
 
 #import "DHAppleAPISchemeHandler.h"
-#import <Apple_Docs_Framework/Apple_Docs_Framework.h>
 #import "DHDocsetManager.h"
 #import "DHLatencyTester.h"
 #import "DHWebViewController.h"
@@ -25,28 +24,7 @@
         {
             url = [url stringByAppendingFormat:@"&language=%@", ([DHAppleActiveLanguage currentLanguage] == DHNewActiveAppleLanguageObjC) ? @"occ" : @"swift"];
         }
-        DHDocset *docset = [[DHDocsetManager sharedManager] appleAPIReferenceDocset];
-        NSString *toolPath = [docset.documentsPath stringByAppendingPathComponent:@"Apple Docs Helper"];
         NSData *data = [@"<html><head><title>Error</title></head><body>Error. Please reinstall the Apple API Reference docset.</body></html>" dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
-        if(toolPath.length)
-        {
-            @try {
-                DHViewer *viewer = [DHViewer sharedViewer];
-                DHCommandLineParser *parser = [DHCommandLineParser sharedParser];
-                parser.ownPath = toolPath;
-                NSString *bestMirror = [[DHLatencyTester sharedLatency].bestMirror stringByConvertingKapeliHttpURLToHttps];
-                bestMirror = (bestMirror) ? bestMirror : @"https://kapeli.com/feeds/";
-                viewer.isIOS = YES;
-                parser.bestMirror = bestMirror;
-                viewer.url = url;
-                parser.dashBuildNumber = 450;
-                data = [[viewer htmlOutput] dataUsingEncoding:NSUTF8StringEncoding];
-                [self setUpTOC:viewer];
-                [DHXcodeHelper cleanUp];
-                [DHViewer cleanUp];
-            }
-            @catch(NSException *exception) { NSLog(@"%@ %@", exception, [exception callStackSymbols]); }
-        }
         [urlSchemeTask didReceiveData:data];
         [urlSchemeTask didFinish];
     }
@@ -56,26 +34,6 @@
     
 }
 
-- (void)setUpTOC:(DHViewer *)viewer
-{
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        DHWebViewController *controller = [DHWebViewController sharedWebViewController];
-        if(iPad && isRegularHorizontalClass)
-        {
-            if(controller.methodsPopover.popoverVisible)
-            {
-                [controller.methodsPopover dismissPopoverAnimated:YES];
-            }
-        }
-        else
-        {
-            [[controller.actualTOCBrowser searchDisplayController] setActive:NO animated:NO];
-            [[controller.actualTOCBrowser presentingViewController] dismissViewControllerAnimated:YES completion:nil];
-        }
-        controller.lastTocBrowser = nil;
-        controller.currentMethods = viewer.tocEntries.count ? viewer.tocEntries : nil;
-        controller.navigationItem.rightBarButtonItem = (viewer.tocEntries.count) ? [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tocMenu"] style:UIBarButtonItemStylePlain target:controller action:@selector(tocButtonPressed:)] : nil;
-    });
-}
+
 
 @end

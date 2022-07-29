@@ -1,6 +1,0 @@
-framework module Apple_Docs_Framework {
-  umbrella header "Apple_Docs_Framework.h"
-
-  export *
-  module * { export * }
-}
